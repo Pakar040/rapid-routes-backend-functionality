@@ -6,6 +6,43 @@
     <title>Text to Speech</title>
 </head>
 <body>
-    <h1>Text to Speech</h1>
+    <h1>Generate Speech</h1>
+
+    <label for="text">Enter text to speak:</label><br>
+    <textarea id="text" rows="5" cols="50" placeholder="Type something here..." >Today is a wonderful day to build something people love!</textarea><br>
+
+    <label for="instructions">Enter instructions for how to speak:</label><br>
+    <textarea id="instructions" rows="5" cols="50" placeholder="Type something here..." >Speak in a cheerful and positive tone.</textarea><br>
+
+    <button onclick="generateSpeech()">Generate</button><br>
+
+    <a id="downloadLink" href="#" download style="display: none;">Download MP3</a>
+
+    <script>
+        async function generateSpeech() {
+          const input = document.getElementById('text').value;
+          const instructions = document.getElementById('instructions').value;
+    
+          const res = await fetch('/api/text-to-speech', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ input, instructions })
+          });
+    
+          if (!res.ok) {
+            alert('Error generating speech.');
+            return;
+          }
+    
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+    
+          const downloadLink = document.getElementById('downloadLink');
+          downloadLink.href = url;
+          downloadLink.download = 'speech.mp3';
+          downloadLink.style.display = 'inline';
+          downloadLink.innerText = 'Download MP3';
+        }
+    </script>
 </body>
 </html>
