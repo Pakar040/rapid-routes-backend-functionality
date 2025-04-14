@@ -19,6 +19,7 @@ app.get('/text-to-speech.html', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'text-to-speech.html'));
 });
 
+// @ts-ignore: Bun and TypeScript don't like Express overloads
 app.post('/api/text-to-speech', async (req: Request, res: Response) => {
   const body = req.body as { input: string; instructions: string };
 
