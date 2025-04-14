@@ -1,8 +1,15 @@
-import type { Request, Response } from 'express';
+import express, { type Request, type Response } from 'express';
+import path from 'path';
+import dotenv from 'dotenv';
+import { SpeechGenerator } from './textToSpeech';
 
-const express = require('express');
-const path = require('path');
+dotenv.config();
+
 const app = express();
+const port = 3000;
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
@@ -12,4 +19,27 @@ app.get('/text-to-speech.html', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'text-to-speech.html'));
 });
 
-app.listen(3000, () => console.log('Server running at http://localhost:3000'));
+app.post('/api/text-to-speech', async (req: Request, res: Response) => {
+  const body = req.body as { input: string; instructions: string };
+
+  if (!body.input || !body.instructions) {
+    return res.status(400).json({ error: 'Missing input or instructions' });
+  }
+
+  const generator = new SpeechGenerator(process.env.OPENAI_API_KEY as string);
+
+  try {
+    const buffer = await generator.generateSpeechBuffer(body.input, body.instructions);
+    res.setHeader('Content-Disposition', 'attachment; filename="speech.mp3"');
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.send(buffer);
+  } catch (err) {
+    console.error('Speech generation error:', err);
+    res.status(500).json({ error: 'Speech generation failed' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+
