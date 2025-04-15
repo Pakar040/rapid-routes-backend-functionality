@@ -1,4 +1,6 @@
-// videoDescription.ts
+// Do bun run src/videoDescription.ts to intiate the server
+// Then go to your web browser and paste in http://127.0.0.1:3000/video-description.html
+
 import { serve } from "bun";
 import { extractFramesAsBase64 } from "./frames";
 import OpenAI from "openai";
