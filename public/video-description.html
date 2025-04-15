@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Video Description Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #000;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    form {
+      border: 2px solid #000;
+      padding: 1rem;
+      border-radius: 5px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    input[type="file"] {
+      margin: 1rem 0;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    #description {
+      margin-top: 2rem;
+      padding: 1rem;
+      width: 90%;
+      max-width: 600px;
+      border: 1px solid #000;
+      border-radius: 5px;
+      background-color: #f7f7f7;
+    }
+  </style>
+</head>
+<body>
+  <h1>Video Description Generator</h1>
+  <form id="uploadForm">
+    <label for="videoUpload">Upload your .mp4 video:</label><br/>
+    <input type="file" id="videoUpload" name="users_video" accept="video/mp4" required /><br/>
+    <button type="submit">Analyze Video</button>
+  </form>
+
+  <div id="description">Video description will appear here.</div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const descriptionDiv = document.getElementById('description');
+      const videoInput = document.getElementById('videoUpload');
+  
+      if (!videoInput.files || videoInput.files.length === 0) {
+        descriptionDiv.innerText = 'Please choose a video file.';
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('users_video', videoInput.files[0]);
+  
+      descriptionDiv.innerText = 'Processing video, please wait...';
+  
+      try {
+        // Make sure this URL points to your Bun server (port 3000, for example)
+        const response = await fetch('http://127.0.0.1:3000/analyze-video', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        console.log('HTTP status:', response.status);
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.statusText}`);
+        }
+  
+        const result = await response.json();
+        console.log('API response:', result);
+        descriptionDiv.innerText = result.description || 'No description returned.';
+      } catch (error) {
+        console.error('Error:', error);
+        descriptionDiv.innerText = 'An error occurred: ' + error.message;
+      }
+    });
+  </script>   
+</body>
+</html>
