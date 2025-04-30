@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // text-to-speech generate mp3
 // @ts-ignore: Bun and TypeScript don't like Express overloads
 app.post('/api/text-to-speech', async (req: Request, res: Response) => {
-  
+
   const body = req.body as { input: string; instructions: string };
 
   if (!body.input || !body.instructions) {
