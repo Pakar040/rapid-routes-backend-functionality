@@ -1,0 +1,17 @@
+{
+  "name": "sprint-5",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "dotenv": "^16.5.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "neo4j-driver": "^5.28.1",
+    "openai": "^4.96.0"
+  }
+}
