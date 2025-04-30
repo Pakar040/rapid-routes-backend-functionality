@@ -16,7 +16,7 @@ export async function describeVideoFrames(videoPath: string, fps: number): Promi
   try {
     const framesBase64: string[] = await extractFramesAsBase64(videoPath, fps);
     console.log("Extracted frames count:", framesBase64.length);
-    
+
     const content = [
       { type: "text", text: "Describe the content of the video based on these frames:" },
       ...framesBase64.map(frameBase64 => ({
@@ -27,16 +27,16 @@ export async function describeVideoFrames(videoPath: string, fps: number): Promi
         }
       }))
     ];
-    
+
     const messages = [{ role: "user", content }];
     const model = "gpt-4-turbo-2024-04-09";
-    
+
     const response = await openai.chat.completions.create({
       model,
       messages,
       max_tokens: 300,
     });
-    
+
     console.log("OpenAI response:", JSON.stringify(response, null, 2));
     return response.choices[0].message.content as string;
   } catch (error: any) {
